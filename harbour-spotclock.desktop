@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+X-Nemo-Application-Type=silica-qt5
+Icon=harbour-spotclock
+Exec=harbour-spotclock
+Name=harbour-spotclock
+
+[X-Sailjail]
+# Replace with your organization as a reverse domain name
+OrganizationName=org.myorg
+# ApplicationName does not have to be identical to Name
+ApplicationName=spotclock
+# Add the required permissions here
+Permissions=Internet
