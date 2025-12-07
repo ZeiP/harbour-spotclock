@@ -166,11 +166,6 @@ Page {
         }
     }
 
-    function sameDate(date1, date2) {
-        console.log("Comparing" + date1.getFullYear() + date2.getFullYear() + date1.getMonth() + date2.getMonth() + date1.getDate() + date2.getDate());
-        return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate();
-    }
-
     function updateHighlight(newHour) {
         console.log("Updating highlight");
         var today = new Date()

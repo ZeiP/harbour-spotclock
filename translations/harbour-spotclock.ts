@@ -38,6 +38,14 @@
         <source>SpotClock</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Today %1 o&apos;clock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 snt / kWh</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ListPage</name>

@@ -101,18 +101,4 @@ console.log(url);
             console.log("--- SIGNAL EMITTED for " + dateString);
         });
     }
-
-    Component.onCompleted: {
-            // Use the connect method available to all QObject descendants (like Item)
-            // Syntax: connect(source, signal, receiver, slot)
-
-            // Connect the 'dataLoaded' signal from the controller (source)
-            // to a new inline JavaScript function (slot) on the controller (receiver).
-
-            controller.dataLoaded.connect(function(key) {
-                console.log("--- INTERNAL CHECK (JS CONNECT): DataController successfully emitted and received signal for key: " + key);
-            });
-
-            console.log("Internal signal connection established.");
-    }
 }

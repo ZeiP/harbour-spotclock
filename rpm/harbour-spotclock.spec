@@ -1,7 +1,7 @@
 Name:       harbour-spotclock
 
 Summary:    Spot clock
-Version:    0.2
+Version:    1.0
 Release:    1
 License:    LICENSE
 URL:        http://example.org/

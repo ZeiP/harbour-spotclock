@@ -38,6 +38,14 @@
         <source>SpotClock</source>
         <translation>SpotClock</translation>
     </message>
+    <message>
+        <source>Today %1 o&apos;clock</source>
+        <translation>Tänään kello %1</translation>
+    </message>
+    <message>
+        <source>%1 snt / kWh</source>
+        <translation>%1 snt / kWt</translation>
+    </message>
 </context>
 <context>
     <name>ListPage</name>
@@ -47,15 +55,15 @@
     </message>
     <message>
         <source>Scroll to top</source>
-        <translation type="unfinished"></translation>
+        <translation>Hyppää ylös</translation>
     </message>
     <message>
         <source>Nothing here</source>
-        <translation type="unfinished"></translation>
+        <translation>Tyhjää täynnä</translation>
     </message>
     <message>
         <source>Hourly rates on %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Tunnittaiset hinnat %1</translation>
     </message>
 </context>
 </TS>

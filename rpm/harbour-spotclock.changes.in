@@ -18,3 +18,6 @@
 * Sun Dec 07 2025 Jyri-Petteri Paloposki <jyri-petteri.paloposki@iki.fi> 0.2
 - Allow viewing previous days and next day when the data is available
 - Highlight today's current hour.
+
+* Sun Dec 07 2025 Jyri-Petteri Paloposki <jyri-petteri.paloposki@iki.fi> 0.3
+- Add browseable cover information of current hour's prices.
