@@ -47,15 +47,15 @@
     </message>
     <message>
         <source>Scroll to top</source>
-        <translation type="unfinished"></translation>
+        <translation>Hyppää ylös</translation>
     </message>
     <message>
         <source>Nothing here</source>
-        <translation type="unfinished"></translation>
+        <translation>Tyhjää täynnät</translation>
     </message>
     <message>
         <source>Hourly rates on %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Tunnittaiset hinnat %1</translation>
     </message>
 </context>
 </TS>
