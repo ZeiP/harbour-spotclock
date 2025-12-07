@@ -57,9 +57,5 @@
         <source>Hourly rates on %1</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Refresh</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 </TS>

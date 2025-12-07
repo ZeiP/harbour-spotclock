@@ -3,7 +3,7 @@ Type=Application
 X-Nemo-Application-Type=silica-qt5
 Icon=harbour-spotclock
 Exec=harbour-spotclock
-Name=harbour-spotclock
+Name=Spot clock
 
 [X-Sailjail]
 # Replace with your organization as a reverse domain name

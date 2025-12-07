@@ -17,6 +17,7 @@ CONFIG += sailfishapp
 SOURCES += src/harbour-spotclock.cpp
 
 DISTFILES += qml/harbour-spotclock.qml \
+    qml/DataController.qml \
     qml/cover/CoverPage.qml \
     qml/pages/AboutPage.qml \
     qml/pages/ListPage.qml \

@@ -12,7 +12,9 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
-* Sun Apr 13 2014 Jack Tar <jack.tar@example.com> 0.0.1-1
-- Scrubbed the deck
-- Hoisted the sails
+* Tue Dec 02 2025 Jyri-Petteri Paloposki <jyri-petteri.paloposki@iki.fi> 0.1
+- First version, only shows today's prices.
 
+* Sun Dec 07 2025 Jyri-Petteri Paloposki <jyri-petteri.paloposki@iki.fi> 0.2
+- Allow viewing previous days and next day when the data is available
+- Highlight today's current hour.

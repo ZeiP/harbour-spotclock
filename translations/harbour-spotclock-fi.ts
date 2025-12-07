@@ -43,22 +43,18 @@
     <name>ListPage</name>
     <message>
         <source>About</source>
-        <translation>Tietoja</translation>
+        <translation type="unfinished">Tietoja</translation>
     </message>
     <message>
         <source>Scroll to top</source>
-        <translation>Palaa ylös</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Nothing here</source>
-        <translation>Täällä ei ole mitään</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Hourly rates on %1</source>
-        <translation>Tunnittaiset hinnat %1</translation>
-    </message>
-    <message>
-        <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
