@@ -12,6 +12,10 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
+* Fri Mar 20 2026 Jyri-Petteri Paloposki <jyri-petteri.paloposki@iki.fi> 2.0
+- Use ENTSO-E API via a proxy.
+- Show quarterly prices.
+
 * Tue Dec 02 2025 Jyri-Petteri Paloposki <jyri-petteri.paloposki@iki.fi> 0.1
 - First version, only shows today's prices.
 

@@ -1,10 +1,10 @@
 Name:       harbour-spotclock
 
 Summary:    Spot clock
-Version:    1.0
+Version:    2.0
 Release:    1
-License:    LICENSE
-URL:        http://example.org/
+License:    GPLv3
+URL:        https://github.com/zeip/harbour-spotclock
 Source0:    %{name}-%{version}.tar.bz2
 Requires:   sailfishsilica-qt5 >= 0.10.9
 BuildRequires:  pkgconfig(sailfishapp) >= 1.0.2

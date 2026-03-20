@@ -36,26 +36,64 @@ CoverBackground {
     }
 
     function setCover(spot) {
-        var date = new Date()
-        var dateString = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+        if (!spot) {
+            hourlabel.text = qsTr("SpotClock");
+            pricelabel.text = "...";
+            return;
+        }
+        var dateString = spot.getFullYear() + "-" + controller.zeroPad(spot.getMonth() + 1) + "-" + controller.zeroPad(spot.getDate());
         var hour = spot.getHours();
-        hourlabel.text = qsTr("Today %1 o'clock").arg(hour);
         cover.hour = spot;
-        pricelabel.text = qsTr("%1 snt / kWh").arg(controller.priceData[dateString][hour]['price']);
+
+        if (!controller || !controller.priceData || !controller.priceData[dateString] || !controller.priceData[dateString][hour]) {
+            hourlabel.text = qsTr("SpotClock");
+            pricelabel.text = "...";
+            return;
+        }
+
+        var entry = controller.priceData[dateString][hour];
+        var price = entry['price'];
+
+        if (controller.coverShowQuarters && entry['hasQuarters']) {
+            var min = spot.getMinutes();
+            var qStr = "00";
+            if (min < 15) { qStr = "00"; price = entry['q0Price']; }
+            else if (min < 30) { qStr = "15"; price = entry['q1Price']; }
+            else if (min < 45) { qStr = "30"; price = entry['q2Price']; }
+            else { qStr = "45"; price = entry['q3Price']; }
+            hourlabel.text = qsTr("Today %1:%2").arg(controller.zeroPad(hour)).arg(qStr);
+        } else {
+            hourlabel.text = qsTr("Today %1 o'clock").arg(hour);
+        }
+
+        pricelabel.text = qsTr("%1 snt / kWh").arg(price);
     }
 
     Timer {
-        id: highlightedCheck
-        interval: 60000 // 60 secs
+        id: updateTimer
         running: true
-        repeat: true
+        repeat: false
         onTriggered: {
             var today = new Date();
-            console.log("checking " + cover.hour + " (" + today.getHours() + ")");
-            if (cover.hour !== today.getHours()) {
-                setCover(today);
-            }
+            setCover(today);
+            scheduleNextTick();
         }
+    }
+
+    function scheduleNextTick() {
+        if (!controller) return;
+        var now = new Date();
+        var msToNext;
+        if (controller.coverShowQuarters) {
+            var nextQuarter = Math.floor(now.getMinutes() / 15 + 1) * 15;
+            var nextTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), nextQuarter, 0, 0);
+            msToNext = nextTime.getTime() - now.getTime();
+        } else {
+            var nextTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 1, 0, 0, 0);
+            msToNext = nextTime.getTime() - now.getTime();
+        }
+        updateTimer.interval = msToNext > 0 ? msToNext + 500 : 500;
+        updateTimer.restart();
     }
 
     CoverActionList {
@@ -78,6 +116,17 @@ CoverBackground {
         }
     }
 
+    Connections {
+        target: controller
+        onVatPercentChanged: setCover(cover.hour)
+        onBiddingZoneChanged: setCover(cover.hour)
+        onCoverShowQuartersChanged: {
+            setCover(cover.hour)
+            scheduleNextTick()
+        }
+        onProxyUrlChanged: setCover(cover.hour)
+    }
+
     Component.onCompleted: {
         // For some reason Connect didn't work, so do it like this.
         controller.dataLoaded.connect(function(dateKey) {
@@ -89,5 +138,6 @@ CoverBackground {
                 setCover(hour);
             }
         });
+        scheduleNextTick();
     }
 }

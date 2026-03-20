@@ -1,20 +1,76 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import org.nemomobile.configuration 1.0
 
 Item {
     id: controller
 
     // Signal: Emitted when the API call is successful and data is populated
     signal dataLoaded(var dateKey)
+    // Signal: Emitted when zone list is fetched
+    signal zonesLoaded()
 
     property var priceData: ({})
 
     property ListModel priceList: ListModel { }
 
+    // Persistent settings via dconf
+    ConfigurationGroup {
+        id: settings
+        path: "/apps/harbour-spotclock"
+
+        property string proxyUrl: "https://entsodata.ardcoras.fi/"
+        property string biddingZone: "FI"
+        property string vatPercent: "25.5"
+        property bool alwaysShowQuarters: false
+        property bool coverShowQuarters: false
+    }
+
+    // Zone list for SettingsPage ComboBox
+    property var zoneList: []
+
+    // Expose settings as properties for other components to read
+    property alias proxyUrl: settings.proxyUrl
+    property alias biddingZone: settings.biddingZone
+    property alias vatPercent: settings.vatPercent
+    property alias alwaysShowQuarters: settings.alwaysShowQuarters
+    property alias coverShowQuarters: settings.coverShowQuarters
+
+    onBiddingZoneChanged: {
+        priceData = {};
+    }
+
+    onVatPercentChanged: {
+        priceData = {};
+    }
+
+    onAlwaysShowQuartersChanged: {
+        priceData = {};
+    }
+
+    onProxyUrlChanged: {
+        priceData = {};
+    }
+
+    function zeroPad(n) {
+        return ("0" + n).slice(-2);
+    }
+
+    function hasDataForDate(targetDate) {
+        var dateString;
+        if (typeof targetDate !== 'string') {
+            dateString = targetDate.getFullYear() + "-" + zeroPad(targetDate.getMonth() + 1) + "-" + zeroPad(targetDate.getDate());
+        }
+        else {
+            dateString = targetDate;
+        }
+        return priceData.hasOwnProperty(dateString);
+    }
+
     function getModelForDate(targetDate) {
         var dateString;
         if (typeof targetDate !== 'string') {
-            dateString = targetDate.getFullYear() + "-" + (targetDate.getMonth() + 1) + "-" + targetDate.getDate();
+            dateString = targetDate.getFullYear() + "-" + zeroPad(targetDate.getMonth() + 1) + "-" + zeroPad(targetDate.getDate());
         }
         else {
             dateString = targetDate;
@@ -22,12 +78,10 @@ Item {
 
         console.log("Looking up data for key:", dateString);
 
-        // 2. Check if the model exists in the priceData structure.
         if (priceData.hasOwnProperty(dateString)) {
             var model = priceData[dateString];
             console.log("Model found:", model);
 
-            // 3. Return the ListModel object.
             priceList.clear()
             for (var i = 0; i < model.length; i++) {
                 priceList.append(model[i]);
@@ -35,11 +89,8 @@ Item {
             console.log("Set model to " + dateString + " firstprice " + model[0]['price']);
             return priceList;
         } else {
-            // 4. If the data is not yet in the structure, you can return an empty model
-            // or trigger a fetch. Since your getPrices() handles the fetch,
-            // returning an empty model is safer here.
             console.warn("No data found for", dateString, ". Returning null.");
-            return null; // Or return Qt.createQmlObject('ListModel {}', page);
+            return null;
         }
     }
 
@@ -60,7 +111,7 @@ Item {
             console.error("The request failed due to a network error (e.g., offline, DNS failure, server not responding).");
         };
 
-console.log(url);
+        console.log(url);
         xhr.open(method, url, true);
         xhr.responseType = 'json';
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -73,30 +124,76 @@ console.log(url);
         }
     }
 
-    function fetchPrices(date) {
-        var dateString = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+    function fetchZones() {
+        if (!settings.proxyUrl || settings.proxyUrl.length === 0) {
+            console.warn("Proxy URL not configured, cannot fetch zones");
+            return;
+        }
+        var url = settings.proxyUrl + "/zones";
+        request(url, "get", "", function(doc) {
+            var json = doc.response;
+            if (json && json.zones) {
+                zoneList = json.zones;
+                zonesLoaded();
+                console.log("Loaded " + json.zones.length + " zones from proxy");
+            }
+        });
+    }
 
-        var url = "https://www.sahkohinta-api.fi/api/v1/halpa?tunnit=24&tulos=sarja&aikaraja=" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-//        var url = "https://example.org";
+    function fetchPrices(date) {
+        var dateString = date.getFullYear() + "-" + zeroPad(date.getMonth() + 1) + "-" + zeroPad(date.getDate());
+
+        if (!settings.proxyUrl || settings.proxyUrl.length === 0) {
+            console.error("Proxy URL not configured");
+            return;
+        }
+
+        var url = settings.proxyUrl + "/prices/" + settings.biddingZone + "/" + dateString;
         console.log(url);
         request(url, "get", "", function(doc) {
-//            var fakeResponse = '[{"aikaleima_suomi":"2025-12-07T00:00","aikaleima_utc":"2025-12-06T22:00","hinta":1.241},{"aikaleima_suomi":"2025-12-07T01:00","aikaleima_utc":"2025-12-06T23:00","hinta":1.073},{"aikaleima_suomi":"2025-12-07T02:00","aikaleima_utc":"2025-12-07T00:00","hinta":0.96},{"aikaleima_suomi":"2025-12-07T03:00","aikaleima_utc":"2025-12-07T01:00","hinta":0.852},{"aikaleima_suomi":"2025-12-07T04:00","aikaleima_utc":"2025-12-07T02:00","hinta":0.732},{"aikaleima_suomi":"2025-12-07T05:00","aikaleima_utc":"2025-12-07T03:00","hinta":0.925},{"aikaleima_suomi":"2025-12-07T06:00","aikaleima_utc":"2025-12-07T04:00","hinta":0.993},{"aikaleima_suomi":"2025-12-07T07:00","aikaleima_utc":"2025-12-07T05:00","hinta":1.434},{"aikaleima_suomi":"2025-12-07T08:00","aikaleima_utc":"2025-12-07T06:00","hinta":1.898},{"aikaleima_suomi":"2025-12-07T09:00","aikaleima_utc":"2025-12-07T07:00","hinta":1.987},{"aikaleima_suomi":"2025-12-07T10:00","aikaleima_utc":"2025-12-07T08:00","hinta":2.113},{"aikaleima_suomi":"2025-12-07T11:00","aikaleima_utc":"2025-12-07T09:00","hinta":2.177},{"aikaleima_suomi":"2025-12-07T12:00","aikaleima_utc":"2025-12-07T10:00","hinta":2.45},{"aikaleima_suomi":"2025-12-07T13:00","aikaleima_utc":"2025-12-07T11:00","hinta":2.558},{"aikaleima_suomi":"2025-12-07T14:00","aikaleima_utc":"2025-12-07T12:00","hinta":2.714},{"aikaleima_suomi":"2025-12-07T15:00","aikaleima_utc":"2025-12-07T13:00","hinta":3.141},{"aikaleima_suomi":"2025-12-07T16:00","aikaleima_utc":"2025-12-07T14:00","hinta":3.328},{"aikaleima_suomi":"2025-12-07T17:00","aikaleima_utc":"2025-12-07T15:00","hinta":3.658},{"aikaleima_suomi":"2025-12-07T18:00","aikaleima_utc":"2025-12-07T16:00","hinta":3.694},{"aikaleima_suomi":"2025-12-07T19:00","aikaleima_utc":"2025-12-07T17:00","hinta":3.489},{"aikaleima_suomi":"2025-12-07T20:00","aikaleima_utc":"2025-12-07T18:00","hinta":3.165},{"aikaleima_suomi":"2025-12-07T21:00","aikaleima_utc":"2025-12-07T19:00","hinta":3.14},{"aikaleima_suomi":"2025-12-07T22:00","aikaleima_utc":"2025-12-07T20:00","hinta":3.271},{"aikaleima_suomi":"2025-12-07T23:00","aikaleima_utc":"2025-12-07T21:00","hinta":3.171}]';
-
             var priceEntry = [];
-
             var json = doc.response;
-            for(var i = 0; i < json.length; i++) {
-                var tl = json[i];
-                var item = {}
-                var dateObject = new Date(tl.aikaleima_utc);
-                item.price = (parseFloat(tl.hinta) * 1.255).toFixed(3); // Handle the VAT like this for now.
-                item.hour = dateObject.getHours();
+
+            if (!json || !json.prices) {
+                console.error("Invalid response from proxy");
+                return;
+            }
+
+            var vatMultiplier = 1.0;
+            var vat = parseFloat(settings.vatPercent);
+            if (!isNaN(vat) && vat > 0) {
+                vatMultiplier = 1.0 + vat / 100.0;
+            }
+
+            for (var i = 0; i < json.prices.length; i++) {
+                var entry = json.prices[i];
+                var item = {};
+                item.hour = entry.hour;
+                item.price = (parseFloat(entry.price) * vatMultiplier).toFixed(3);
                 item.isHighlighted = false;
+                item.sectionExpanded = settings.alwaysShowQuarters;
+
+                // Handle quarter data
+                if (entry.quarters && entry.quarters.length > 0) {
+                    item.hasQuarters = true;
+                    item.q0Price = (parseFloat(entry.quarters[0].price) * vatMultiplier).toFixed(3);
+                    item.q1Price = (parseFloat(entry.quarters[1].price) * vatMultiplier).toFixed(3);
+                    item.q2Price = (parseFloat(entry.quarters[2].price) * vatMultiplier).toFixed(3);
+                    item.q3Price = (parseFloat(entry.quarters[3].price) * vatMultiplier).toFixed(3);
+                } else {
+                    item.hasQuarters = false;
+                    item.q0Price = "0";
+                    item.q1Price = "0";
+                    item.q2Price = "0";
+                    item.q3Price = "0";
+                }
+
                 priceEntry.push(item);
             }
             priceData[dateString] = priceEntry;
-            console.log("Setting " + dateString + "to lastprice " + tl.hinta);
+            console.log("Setting " + dateString + " prices from proxy");
 
+            var dateObject = new Date(date);
             dataLoaded(dateObject); // Emit the signal
             console.log("--- SIGNAL EMITTED for " + dateString);
         });

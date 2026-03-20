@@ -31,7 +31,7 @@ Page {
                 wrapMode: Text.WordWrap
                 anchors.left: parent.left; anchors.right: parent.right
                 font.pixelSize: Theme.fontSizeSmall
-                text: qsTr("SpotClock is an application for fetching hourly electricity spot prices, currently only for Finland.")
+                text: qsTr("SpotClock is an application for fetching hourly and quarterly electricity spot prices using ENTSO-E open data.")
             }
             Label {
                 anchors.left: parent.left; anchors.right: parent.right
@@ -43,13 +43,18 @@ Page {
             }
             Button {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: qsTr("GitHub (source codes and issues)")
+                text: qsTr("Application GitHub (code & issues)")
                 onClicked: Qt.openUrlExternally("https://github.com/ZeiP/harbour-spotclock")
             }
             Button {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: qsTr("Sähköhinta-API")
-                onClicked: Qt.openUrlExternally("https://www.sahkohinta-api.fi/")
+                text: qsTr("Proxy server GitHub (code & issues)")
+                onClicked: Qt.openUrlExternally("https://github.com/Ardcoras/entsodata")
+            }
+            Button {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("ENTSO-E transparency platform")
+                onClicked: Qt.openUrlExternally("https://transparency.entsoe.eu/")
             }
         }
 

@@ -21,6 +21,7 @@ DISTFILES += qml/harbour-spotclock.qml \
     qml/cover/CoverPage.qml \
     qml/pages/AboutPage.qml \
     qml/pages/ListPage.qml \
+    qml/pages/SettingsPage.qml \
     rpm/harbour-spotclock.changes.in \
     rpm/harbour-spotclock.changes.run.in \
     rpm/harbour-spotclock.spec \
